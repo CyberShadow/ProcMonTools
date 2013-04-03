@@ -68,13 +68,17 @@ processLoop:
 	enum LEFT = ROW_HEIGHT / 2;
 	enum SECOND_WIDTH = ROW_HEIGHT * 2;
 	enum TICKS_PER_PIXEL = convert!("seconds", "hnsecs")(1) / SECOND_WIDTH;
+	enum MAX_TEXT_WIDTH = 200; // An estimate of how wide the legend can be
 
 	auto seconds = (last-first).convert!("hnsecs", "seconds")() + 1;
 	auto legendX = LEFT + seconds*SECOND_WIDTH + SECOND_WIDTH/2;
+	auto legendTextX = legendX + ROW_HEIGHT * 3 / 4;
 
 	auto svg = newXml().svg();
 	svg.xmlns = "http://www.w3.org/2000/svg";
 	svg["version"] = "1.1";
+	svg.width = text(legendTextX + MAX_TEXT_WIDTH);
+	svg.height = text(TOP + max(rows.length, programs.length) * ROW_HEIGHT);
 
 	auto grid = svg.g();
 	grid.style = "stroke:rgb(200,200,200); stroke-width:2";
@@ -124,7 +128,7 @@ processLoop:
 		legend.rect(props);
 		props["fill"] = "url(#fade)";
 		legend.rect(props);
-		auto t = legendText.text(["x" : text(legendX + ROW_HEIGHT * 3 / 4), "y" : text(TOP + y * ROW_HEIGHT + ROW_HEIGHT*3/4)]);
+		auto t = legendText.text(["x" : text(legendTextX), "y" : text(TOP + y * ROW_HEIGHT + ROW_HEIGHT*3/4)]);
 		t = program.stripExtension();
 	}
 

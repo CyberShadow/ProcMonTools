@@ -19,6 +19,14 @@ struct ProcessInfo
 	long start, exit = long.min;
 }
 
+long getTime(XmlNode event)
+{
+	auto relTime = event.findChild("Relative_Time");
+	if (relTime)
+		return parseTime("H:i:s.u", event["Relative_Time"].text).stdTime;
+	return parseTime("H:i:s.u", event["Time_of_Day"].text).stdTime;
+}
+
 ProcessInfo[] parseLog(XmlDocument xml)
 {
 	ProcessInfo[uint] processes;
@@ -28,12 +36,12 @@ ProcessInfo[] parseLog(XmlDocument xml)
 			processes[event["ProcessIndex"].text.to!uint()] = ProcessInfo(
 				event["Process_Name"].text,
 				event["Detail"].text.split("Command line: ")[1].split(", Current directory: ")[0],
-				parseTime("H:i:s.u", event["Relative_Time"].text).stdTime
+				event.getTime()
 			);
 		else
 		if (event["Operation"].text == "Process Exit")
 			processes[event["ProcessIndex"].text.to!uint()].exit =
-				parseTime("H:i:s.u", event["Relative_Time"].text).stdTime;
+				event.getTime();
 	}
 	return processes.values;
 }

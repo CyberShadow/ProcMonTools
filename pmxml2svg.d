@@ -77,7 +77,7 @@ processLoop:
 	auto svg = newXml().svg();
 	svg.xmlns = "http://www.w3.org/2000/svg";
 	svg["version"] = "1.1";
-	svg.width = text(legendTextX + MAX_TEXT_WIDTH);
+	svg.width  = text(legendTextX + MAX_TEXT_WIDTH);
 	svg.height = text(TOP + max(rows.length, programs.length) * ROW_HEIGHT);
 
 	auto grid = svg.g();
@@ -138,6 +138,6 @@ processLoop:
 void main(string[] args)
 {
 	auto processes = parseLog(new XmlDocument(readText(args[1])));
-	auto svg = graph(processes);
-	write(setExtension(args[1], "svg"), svg.toString());
+	auto svg = processes.graph();
+	args[1].setExtension("svg").write(svg.toString());
 }
